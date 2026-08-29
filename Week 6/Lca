@@ -1,0 +1,49 @@
+#include<bits/stdc++.h>
+using namespace std;
+struct node{
+	int val;
+	node*left,*right;
+	node(int v):val(v),left(NULL),right(NULL){}
+};
+node*buildtree(){
+	int rootval;
+	cout<<"enter root value: ";cin>>rootval;
+	if(rootval==-1)return NULL;
+	node*root=new node(rootval);
+	queue<node*>q;q.push(root);
+	while(!q.empty()){
+		node*curr=q.front();q.pop();
+		int l,r;
+		cout<<"left child of "<<curr->val<<" (-1 if none): ";cin>>l;
+		if(l!=-1){curr->left=new node(l);q.push(curr->left);}
+		cout<<"right child of "<<curr->val<<" (-1 if none): ";cin>>r;
+		if(r!=-1){curr->right=new node(r);q.push(curr->right);}
+	}
+	return root;
+}
+node*findnode(node*root,int val){
+	if(!root)return NULL;
+	if(root->val==val)return root;
+	node*left=findnode(root->left,val);
+	if(left)return left;
+	return findnode(root->right,val);
+}
+node*lca(node*root,node*p,node*q){
+	if(!root||root==p||root==q)return root;
+	node*left=lca(root->left,p,q);
+	node*right=lca(root->right,p,q);
+	if(left&&right)return root;
+	return left?left:right;
+}
+int main(){
+	node*root=buildtree();
+	int pv,qv;
+	cout<<"enter value of node p: ";cin>>pv;
+	cout<<"enter value of node q: ";cin>>qv;
+	node*p=findnode(root,pv);
+	node*q=findnode(root,qv);
+	if(!p||!q){cout<<"one or both nodes not found in the tree.\n";return 0;}
+	node*ancestor=lca(root,p,q);
+	cout<<"lca of "<<pv<<" and "<<qv<<" is: "<<ancestor->val<<endl;
+	return 0;
+}
